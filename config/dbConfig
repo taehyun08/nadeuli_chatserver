@@ -1,0 +1,6 @@
+const dbConfig = {
+  mongoURI: 'mongodb://localhost:27017/nadeuli',
+  // replace 'localhost', '27017', 'your_database' with your MongoDB connection details
+};
+
+module.exports = dbConfig;
