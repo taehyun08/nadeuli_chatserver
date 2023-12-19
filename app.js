@@ -11,9 +11,9 @@ const ChatMessage = require('./model/chatMessage');
 const chatRoomRouter = require('./routes/chatRoom');
 
 const options = {
-  key: fs.readFileSync("/config/nadeuli.kr/privkey1.pem'"),
-  cert: fs.readFileSync("/config/nadeuli.kr/cert1.pem"),
-  ca: fs.readFileSync('/config/nadeuli.kr/fullchain1.pem'),
+  key: fs.readFileSync("./config/nadeuli.kr/privkey1.pem'"),
+  cert: fs.readFileSync("./config/nadeuli.kr/cert1.pem"),
+  ca: fs.readFileSync('./config/nadeuli.kr/fullchain1.pem'),
 };
 
 const app = express();
