@@ -13,3 +13,6 @@ COPY . .
 EXPOSE 3001
 
 CMD ["pm2-runtime", "app.js"]
+
+RUN chown -R node:node /config/
+RUN chmod -R 700 /config/
