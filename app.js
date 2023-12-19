@@ -9,11 +9,12 @@ const socketIO = require('socket.io');
 const ChatRoom = require('./model/chatRoom');
 const ChatMessage = require('./model/chatMessage');
 const chatRoomRouter = require('./routes/chatRoom');
+const path = require('path');
 
 const options = {
-  key: fs.readFileSync("/app/config/nadeuli.kr/privkey1.pem'"),
-  cert: fs.readFileSync("/app/config/nadeuli.kr/cert1.pem"),
-  ca: fs.readFileSync('/app/config/nadeuli.kr/fullchain1.pem'),
+  key: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/privkey1.pem")),
+  cert: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/cert1.pem")),
+  ca: fs.readFileSync(path.resolve('/app/config/nadeuli.kr/fullchain1.pem')),
 };
 
 const app = express();
