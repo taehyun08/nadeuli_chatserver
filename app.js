@@ -2,17 +2,26 @@ const express = require('express');
 // const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const http = require('http');
+const https = require('https');
+const fs = require("fs");
 const socketIO = require('socket.io');
 // const mongoose = require('./dbConnector');
 const ChatRoom = require('./model/chatRoom');
 const ChatMessage = require('./model/chatMessage');
 const chatRoomRouter = require('./routes/chatRoom');
 
+const options = {
+  key: fs.readFileSync("./config/privkey1.pem'"),
+  cert: fs.readFileSync("./config/cert1.pem"),
+  ca: fs.readFileSync('./config/fullchain1.pem'),
+};
+
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(options,app);
 const io = socketIO(server);
 const PORT = 3001;
+
+
 
 app.use(cors());
 app.use(bodyParser.json());
