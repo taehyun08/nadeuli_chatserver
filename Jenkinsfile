@@ -22,9 +22,7 @@ pipeline {
 
                     // 새로운 도커 컨테이너 실행 (SSL 인증서 마운트)
                     sh 'docker run -d --name nadeulichat -p 81:3001 -v /etc/letsencrypt/archive/nadeuli.kr:/app/config/nadeuli.kr -u root lsm00/nadeulichat:latest'
-                    // 호스트에서 마운트된 디렉터리 권한 조정
-                    sh 'docker exec -u root nadeulichat chown -R node:node /config/'
-                    sh 'docker exec -u root nadeulichat chmod -R 700 /config/'
+                    
                     withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKERHUB_ACCESS_TOKEN')]) {
                         // Docker Hub에 로그인하고 이미지 푸시
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
