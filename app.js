@@ -6,10 +6,41 @@ const https = require('https');
 const fs = require("fs");
 const socketIO = require('socket.io');
 // const mongoose = require('./dbConnector');
+const { MongoClient } = require('mongodb');
 const ChatRoom = require('./model/chatRoom');
 const ChatMessage = require('./model/chatMessage');
 const chatRoomRouter = require('./routes/chatRoom');
 const path = require('path');
+
+// MongoDB 연결 정보
+const dbConfig = {
+  host: 'mongodb://kcrt8.vpc.mg.naverncp.com:17017',
+  dbName: 'nadeuli',
+  user: 'nadeuli.nadeuli',
+  password: 'Jason~1~1',
+};
+
+// MongoClient 생성
+const client = new MongoClient(dbConfig.host, { useNewUrlParser: true, useUnifiedTopology: true });
+
+// 연결
+async function connect() {
+  try {
+    await client.connect();
+
+    console.log('Connected to the database');
+
+    // 여기에서 MongoDB에 대한 작업 수행
+  } catch (error) {
+    console.error('Error connecting to the database:', error.message);
+  } finally {
+    // 연결 종료
+    await client.close();
+  }
+}
+
+// 연결 실행
+connect();
 
 const options = {
   key: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/privkey1.pem")),
