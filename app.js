@@ -8,9 +8,9 @@ const socketIO = require('socket.io');
 // const mongoose = require('./dbConnector');
 const { MongoClient } = require('mongodb');
 const ChatRoom = require('./model/chatRoom');
-const ChatMessage = require('./model/chatMessage');
 const chatRoomRouter = require('./routes/chatRoom');
 const path = require('path');
+const mongoose = require('mongoose');
 
 // MongoDB 연결 정보
 const dbConfig = {
@@ -50,7 +50,11 @@ const options = {
 
 const app = express();
 const server = https.createServer(options,app);
-const io = socketIO(server);
+const io = socketIO(server, {
+  cors: {
+    origin: '*'
+  },
+});
 const PORT = 3001;
 
 
@@ -84,31 +88,9 @@ io.on('connection', (socket) => {
   updateChatRooms();
 
   // 멤버가 채팅방에 참가
-  socket.on('joinRoom', async (data) => {
-    const { tag, roomId } = data;
-    try {
-      const chatRoom = await ChatRoom.findById(roomId);
-
-      if (chatRoom) {
-        // 이미 참가 중인지 확인
-        const existingParticipant = chatRoom.participants.find(participant => participant.tag === tag);
-        if (!existingParticipant) {
-          // 참가하지 않았다면 참가
-          chatRoom.participants.push({
-            tag,
-            name: data.name,
-            joinTime: Date.now(),
-          });
-          await chatRoom.save();
-
-          // 채팅방 메시지 조회
-          const messages = await ChatMessage.find({ room: roomId }).populate('sender');
-          socket.emit('chatMessages', messages);
-        }
-      }
-    } catch (error) {
-      console.error('Error during joining room:', error);
-    }
+  socket.on('joinRoom', async ({roomId}) => {
+    socket.emit('joinRoom', { roomId });
+    console.log(roomId, '에 입장함');
   });
 
   socket.on('getChatrooms', ({ userId }) => {
@@ -128,7 +110,7 @@ io.on('connection', (socket) => {
   socket.on('leaveRoom', async (data) => {
     const { tag, roomId } = data;
     try {
-      const chatRoom = await ChatRoom.findById(roomId);
+      const chatRoom = await ChatRoom.findById(new mongoose.Types.ObjectId(roomId));
 
       if (chatRoom) {
         // 참가자 목록에서 제거
@@ -136,7 +118,7 @@ io.on('connection', (socket) => {
         await chatRoom.save();
 
         // 채팅방 메시지 조회
-        const messages = await ChatMessage.find({ room: roomId }).populate('sender');
+        // const messages = await ChatMessage.find({ room: roomId }).populate('sender');
         socket.emit('chatMessages', messages);
 
         // 채팅방 목록 갱신
@@ -148,27 +130,28 @@ io.on('connection', (socket) => {
   });
 
   // 채팅 메시지 전송
-  socket.on('sendMessage', async (data) => {
-    const { tag, roomId, message } = data;
+  socket.on('sendMessage', async ({tag, nickname, roomId, message}) => {
     try {
-      const chatRoom = await ChatRoom.findById(roomId);
-  
+      const chatRoom = await ChatRoom.findById(new mongoose.Types.ObjectId(roomId));
+      console.log(roomId);
       if (chatRoom) {
-        const participant = chatRoom.participants.find(participant => participant.tag === tag);
+        const sender = {"tag" : tag, "name" : nickname};
   
-        if (participant) {
-          // 채팅 메시지 저장
-          const chatMessage = new ChatMessage({
-            sender: participant,
+        if (sender) {
+          // 채팅 메시지 추가
+          const createdAt = new Date();
+          chatRoom.messages.push({
+            sender,
             message,
-            room: roomId,
+            createdAt,
           });
-          await chatMessage.save();
   
-          // 채팅방 메시지 조회 (참가 시간 이후의 채팅만)
-          const joinTime = participant.joinTime;
-          const messages = await ChatMessage.find({ room: roomId, createdAt: { $gte: joinTime } }).populate('sender');
-          io.to(roomId).emit('chatMessages', messages);
+          // 채팅방 업데이트
+          await chatRoom.save();
+
+          console.log('메세지 전송 : ');
+          // 클라이언트에 채팅방 메시지 전송
+          io.to(roomId).emit('sendMessage', {sender, message, createdAt});
         }
       }
     } catch (error) {
