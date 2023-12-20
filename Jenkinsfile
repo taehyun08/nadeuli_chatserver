@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        MONGODB_URI_CREDENTIAL_ID = 'mongobd'
+        MONGODB_URI_CREDENTIAL_ID = 'mongodb'
     }
 
     stages {
