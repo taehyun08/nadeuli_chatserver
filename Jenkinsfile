@@ -15,6 +15,9 @@ pipeline {
                     // MongoDB Credential 로드
                     def mongoDBUri = credentials(MONGODB_URI_CREDENTIAL_ID)
 
+                    // 디렉토리 생성
+                    sh 'mkdir -p /var/lib/jenkins/workspace/nadeuliChatpp/config/'
+
                     // MongoDB 접속 URI를 dbConfig.js 파일에 주입
                     sh "echo 'module.exports = { mongoDB: { mongoURI: \"${mongoDBUri}\" } };' > /var/lib/jenkins/workspace/nadeuliChatpp/config/dbConfig.js"
 
