@@ -44,7 +44,7 @@ router.get('/:tag', async (req, res) => {
       orikkiriId: chatRoom.orikkiriId,
       participants: chatRoom.participants,
       participantCount: chatRoom.participants.length, // 인원 수 추가
-      lastMessage: chatRoom.messages.length > 0 ? chatRoom.messages[0] : null,
+      lastMessage: chatRoom.messages.length > 0 ? chatRoom.messages[chatRoom.messages.length - 1] : null,
     }));
 
     res.json(chatRoomsWithParticipants);

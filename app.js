@@ -4,7 +4,6 @@ const cors = require('cors');
 const https = require('https');
 const fs = require("fs");
 const socketIO = require('socket.io');
-const { MongoClient } = require('mongodb');
 const ChatRoom = require('./model/chatRoom');
 const chatRoomRouter = require('./routes/chatRoom');
 const path = require('path');
