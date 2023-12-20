@@ -13,7 +13,7 @@ pipeline {
 
                     // MongoDB 접속 URI를 dbConfig.js 파일에 주입
                     withCredentials([string(credentialsId: 'mongodb', variable: 'mongoDBUri')]) {
-                    sh "echo 'module.exports = { mongoDB: { mongoURI: "$mongoDBUri" } };' > /var/lib/jenkins/workspace/nadeuliChatpp/config/dbConfig.js"
+                    sh "echo 'module.exports = { mongoDB: { mongoURI: `$mongoDBUri` } };' > /var/lib/jenkins/workspace/nadeuliChatpp/config/dbConfig.js"
                     }
                     // Docker 이미지 빌드
                     dir('/var/lib/jenkins/workspace/nadeuliChatpp') {
