@@ -8,15 +8,13 @@ pipeline {
             }
             steps {
                 script {
-                    // MongoDB Credential 로드
-                    def mongoDBUri = credentials('mongodb')
-
                     // 디렉토리 생성
                     sh 'mkdir -p /var/lib/jenkins/workspace/nadeuliChatpp/config/'
 
                     // MongoDB 접속 URI를 dbConfig.js 파일에 주입
-                    sh "echo 'module.exports = { mongoDB: { mongoURI: \"${mongoDBUri}\" } };' > /var/lib/jenkins/workspace/nadeuliChatpp/config/dbConfig.js"
-
+                    withCredentials([string(credentialsId: 'mongodb', variable: 'mongoDBUri')]) {
+                    sh "echo 'module.exports = { mongoDB: { mongoURI: $mongoDBUri } };' > /var/lib/jenkins/workspace/nadeuliChatpp/config/dbConfig.js"
+                    }
                     // Docker 이미지 빌드
                     dir('/var/lib/jenkins/workspace/nadeuliChatpp') {
                         sh 'sudo docker build -t lsm00/nadeulichat:latest .'
