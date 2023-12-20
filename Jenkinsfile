@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        MONGODB_URI_CREDENTIAL_ID = 'mongodb'
-    }
-
     stages {
         stage('Build and Deploy Docker') {
             when {
@@ -13,7 +9,7 @@ pipeline {
             steps {
                 script {
                     // MongoDB Credential 로드
-                    def mongoDBUri = credentials(MONGODB_URI_CREDENTIAL_ID)
+                    def mongoDBUri = credentials('mongodb')
 
                     // 디렉토리 생성
                     sh 'mkdir -p /var/lib/jenkins/workspace/nadeuliChatpp/config/'
