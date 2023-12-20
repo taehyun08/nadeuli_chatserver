@@ -1,7 +1,0 @@
-const dbConfig = {
-  // mongoURI: 'mongodb://localhost:27017/nadeuli',
-  mongoURI: 'mongodb://nadeuli:Jason~1~1@kcrt8.vpc.mg.naverncp.com:17017/nadeuli',
-  // replace 'localhost', '27017', 'your_database' with your MongoDB connection details
-};
-
-module.exports = dbConfig;

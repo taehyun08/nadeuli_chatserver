@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 //const bodyParser = require('body-parser');
-// const mongoose = require('../dbConnector'); // Import mongoose with the new configuration
 const ChatRoom = require('../model/chatRoom');
 
 // 채팅방 생성
@@ -45,6 +44,7 @@ router.get('/:tag', async (req, res) => {
       orikkiriId: chatRoom.orikkiriId,
       participants: chatRoom.participants,
       participantCount: chatRoom.participants.length, // 인원 수 추가
+      lastMessage: chatRoom.messages[0],
     }));
 
     res.json(chatRoomsWithParticipants);
