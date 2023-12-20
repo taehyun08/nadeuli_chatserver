@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
 
   // 멤버가 채팅방에 참가
   socket.on('joinRoom', async ({roomId}) => {
-    socket.emit('joinRoom', { roomId });
+    socket.join(roomId);
     console.log(roomId, '에 입장함');
   });
 

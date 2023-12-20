@@ -44,7 +44,7 @@ router.get('/:tag', async (req, res) => {
       orikkiriId: chatRoom.orikkiriId,
       participants: chatRoom.participants,
       participantCount: chatRoom.participants.length, // 인원 수 추가
-      lastMessage: chatRoom.messages[0],
+      lastMessage: chatRoom.messages.length > 0 ? chatRoom.messages[0] : null,
     }));
 
     res.json(chatRoomsWithParticipants);
@@ -69,10 +69,9 @@ router.get('/:chatRoomId/:tag', async (req, res) => {
     }
 
     // 사용자가 참여한 시간 이후의 메시지 조회
-    const messages = await ChatMessage.find({
-      createdAt: { $gt: joinTime },
-      room: chatRoomId,
-    });
+    const messages = chatRoom.messages.filter(message => message.createdAt > joinTime);
+    
+    console.log(messages);
 
     // 조회된 메시지를 클라이언트에게 응답
     res.json(messages);
