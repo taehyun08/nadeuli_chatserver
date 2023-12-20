@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const https = require('http');
+const https = require('https');
 const fs = require("fs");
 const socketIO = require('socket.io');
 const { MongoClient } = require('mongodb');
@@ -13,15 +13,15 @@ const mongoose = require('mongoose');
 
 
 
-// const options = {
-//   key: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/privkey1.pem")),
-//   cert: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/cert1.pem")),
-//   ca: fs.readFileSync(path.resolve('/app/config/nadeuli.kr/fullchain1.pem')),
-// };
+const options = {
+  key: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/privkey1.pem")),
+  cert: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/cert1.pem")),
+  ca: fs.readFileSync(path.resolve('/app/config/nadeuli.kr/fullchain1.pem')),
+};
 
 const app = express();
-// const server = https.createServer(options,app);
-const server = https.createServer(app);
+const server = https.createServer(options,app);
+// const server = https.createServer(app);
 const io = socketIO(server, {
   cors: {
     origin: '*'
