@@ -16,10 +16,17 @@ const chatRoomSchema = new mongoose.Schema({
   ],
   messages: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'ChatMessage'
-    }
-  ]
+      sender: {
+        tag: String, // 메시지를 보낸 사용자의 id 값
+        name: String, // 메시지를 보낸 사용자의 이름
+      },
+      message: String, // 메시지 내용
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 });
 
 const ChatRoom = mongoose.model('ChatRoom', chatRoomSchema);

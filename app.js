@@ -1,55 +1,27 @@
 const express = require('express');
-// const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const https = require('https');
+const https = require('http');
 const fs = require("fs");
 const socketIO = require('socket.io');
-// const mongoose = require('./dbConnector');
 const { MongoClient } = require('mongodb');
 const ChatRoom = require('./model/chatRoom');
 const chatRoomRouter = require('./routes/chatRoom');
 const path = require('path');
 const mongoose = require('mongoose');
 
-// MongoDB 연결 정보
-const dbConfig = {
-  host: 'mongodb://kcrt8.vpc.mg.naverncp.com:17017',
-  dbName: 'nadeuli',
-  user: 'nadeuli.nadeuli',
-  password: 'Jason~1~1',
-};
 
-// MongoClient 생성
-const client = new MongoClient(dbConfig.host, { useNewUrlParser: true, useUnifiedTopology: true });
 
-// 연결
-async function connect() {
-  try {
-    await client.connect();
 
-    console.log('Connected to the database');
-
-    // 여기에서 MongoDB에 대한 작업 수행
-  } catch (error) {
-    console.error('Error connecting to the database:', error.message);
-  } finally {
-    // 연결 종료
-    await client.close();
-  }
-}
-
-// 연결 실행
-connect();
-
-const options = {
-  key: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/privkey1.pem")),
-  cert: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/cert1.pem")),
-  ca: fs.readFileSync(path.resolve('/app/config/nadeuli.kr/fullchain1.pem')),
-};
+// const options = {
+//   key: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/privkey1.pem")),
+//   cert: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/cert1.pem")),
+//   ca: fs.readFileSync(path.resolve('/app/config/nadeuli.kr/fullchain1.pem')),
+// };
 
 const app = express();
-const server = https.createServer(options,app);
+// const server = https.createServer(options,app);
+const server = https.createServer(app);
 const io = socketIO(server, {
   cors: {
     origin: '*'

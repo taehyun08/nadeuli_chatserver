@@ -1,11 +1,17 @@
 const mongoose = require('mongoose');
-const dbConfig = require('./config/dbConfig');
+const { mongoDB } = require('./config/dbConfig');
 
-mongoose.connect(dbConfig.mongoURI, {
+const { mongoURI } = mongoDB;
+
+// MongoDB options
+const options = {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+  useUnifiedTopology: true,
+};
+
+// Connect to MongoDB
+mongoose.connect(mongoURI, options)
   .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.error('MongoDB Connection Error:', err));
+  .catch((err) => console.error('MongoDB Connection Error:', err));
 
 module.exports = mongoose;
