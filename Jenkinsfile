@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        MONGODB_URI_CREDENTIAL_ID = 'mongobd'
+    }
+
     stages {
         stage('Build and Deploy Docker') {
             when {
@@ -8,6 +12,12 @@ pipeline {
             }
             steps {
                 script {
+                    // MongoDB Credential 로드
+                    def mongoDBUri = credentials(MONGODB_URI_CREDENTIAL_ID)
+
+                    // MongoDB 접속 URI를 dbConfig.js 파일에 주입
+                    sh "echo 'module.exports = { mongoDB: { mongoURI: \"${mongoDBUri}\" } };' > /var/lib/jenkins/workspace/nadeuliChatpp/config/dbConfig.js"
+
                     // Docker 이미지 빌드
                     dir('/var/lib/jenkins/workspace/nadeuliChatpp') {
                         sh 'sudo docker build -t lsm00/nadeulichat:latest .'
