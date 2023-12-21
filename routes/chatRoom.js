@@ -4,26 +4,37 @@ const router = express.Router();
 const ChatRoom = require('../model/chatRoom');
 
 // 채팅방 생성
-router.post('/create', async (req, res) => {
+router.post('/findOrCreate', async (req, res) => {
   try {
-    const { roomName, productId, orikkiriId, participants } = req.body;
+    const { tag, productId, participants, title, orikkiriId } = req.body;
 
-    console.log(req.body);
-
-    // 채팅방 생성
-    const chatRoom = new ChatRoom({
-      roomName: roomName,
-      productId: productId || 0, // 기본값 0 설정
-      orikkiriId: orikkiriId || 0, // 기본값 0 설정
-      participants: participants,
+    // 채팅방 찾기
+    const existingRoom = await ChatRoom.findOne({
+      productId,
+      participants: {
+        $elemMatch: { tag },
+      },
     });
-    console.log(chatRoom);
-    // 채팅방 저장
-    await chatRoom.save();
 
-    res.json({ success: true, message: 'Chat room created successfully' });
+    if (existingRoom) {
+      // 이미 존재하는 방이면 조회로 이동
+      res.json({ success: true, message: 'Chat room found successfully', chatRoomId: existingRoom._id });
+    } else {
+      // 존재하지 않는 방이면 새로운 방 생성
+      const chatRoom = new ChatRoom({
+        roomName: title,
+        productId: productId || 0,
+        orikkiriId: orikkiriId || 0,
+        participants: participants,
+      });
+
+      // 채팅방 저장
+      const savedChatRoom = await chatRoom.save();
+
+      res.json({ success: true, message: 'Chat room created successfully', chatRoomId: savedChatRoom._id });
+    }
   } catch (error) {
-    console.error('Error creating chat room:', error);
+    console.error('Error finding or creating chat room:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

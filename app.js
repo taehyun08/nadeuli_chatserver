@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const https = require('https');
+const http = require('http');
 const fs = require("fs");
 const socketIO = require('socket.io');
 const ChatRoom = require('./model/chatRoom');
@@ -12,15 +13,39 @@ const mongoose = require('mongoose');
 
 
 
-const options = {
-  key: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/privkey1.pem")),
-  cert: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/cert1.pem")),
-  ca: fs.readFileSync(path.resolve('/app/config/nadeuli.kr/fullchain1.pem')),
-};
+// const options = {
+//   key: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/privkey1.pem")),
+//   cert: fs.readFileSync(path.resolve("/app/config/nadeuli.kr/cert1.pem")),
+//   ca: fs.readFileSync(path.resolve('/app/config/nadeuli.kr/fullchain1.pem')),
+// };
+
+function fileExists(filePath) {
+  try {
+    return fs.existsSync(filePath);
+  } catch (err) {
+    return false;
+  }
+}
+
+let options;
+const privateKeyPath = "/app/config/nadeuli.kr/privkey1.pem";
+const certPath = "/app/config/nadeuli.kr/cert1.pem";
+const caPath = "/app/config/nadeuli.kr/fullchain1.pem";
+
+if (fileExists(privateKeyPath) && fileExists(certPath) && fileExists(caPath)) {
+  options = {
+    key: fs.readFileSync(path.resolve(privateKeyPath)),
+    cert: fs.readFileSync(path.resolve(certPath)),
+    ca: fs.readFileSync(path.resolve(caPath)),
+  };
+}
 
 const app = express();
-const server = https.createServer(options,app);
-// const server = https.createServer(app);
+const server = options
+  ? https.createServer(options, app)
+  : http.createServer(app);
+// const server = https.createServer(options,app);
+// const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
     origin: '*'
