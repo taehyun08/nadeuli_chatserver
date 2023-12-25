@@ -1,14 +1,9 @@
 const express = require("express");
+const router = express.Router();
 const axios = require("axios");
 const cheerio = require("cheerio");
-const cors = require("cors");
-const app = express();
-const PORT = 3001;
 
-app.use(cors());
-app.use(express.json());
-
-app.post("/api/search", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { query } = req.body;
     const response = await axios.get(
@@ -61,6 +56,4 @@ app.post("/api/search", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports = router;
