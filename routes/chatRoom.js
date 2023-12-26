@@ -92,4 +92,27 @@ router.get('/:chatRoomId/:tag', async (req, res) => {
   }
 });
 
+router.post('/joinChatRoom', async (req, res) => {
+  try {
+    const { orikkiriId, participant } = req.body;
+    console.log(req);
+    // orikkiriId가 주어진 경우, 기존 채팅방에 참가
+    if (orikkiriId) {
+      const existingChatRoom = await ChatRoom.findOne({ orikkiriId });
+
+      if (!existingChatRoom) {
+        return res.status(404).json({ error: '채팅방이 존재하지 않습니다.' });
+      }
+
+      existingChatRoom.participants.push(participant);
+      await existingChatRoom.save();
+
+      return res.status(200).json(existingChatRoom);
+    }
+  } catch (error) {
+    console.error('채팅방 참가 요청 중 오류:', error);
+    res.status(500).json({ error: '서버 오류입니다.' });
+  }
+});
+
 module.exports = router;
