@@ -16,7 +16,7 @@ pipeline {
                     sh "echo 'module.exports = { mongoDB: { mongoURI: `$mongoDBUri` } };' > /var/lib/jenkins/workspace/nadeuliChatpp/config/dbConfig.js"
                     }
 
-                    def versionFile = '/var/lib/jenkins/web-version.txt'
+                    def versionFile = '/var/lib/jenkins/chat-version.txt'
                     def currentVersion = readFile(versionFile).trim()
                     def newVersion = (currentVersion as Float) + 0.01
                     newVersion = String.format('%.2f', newVersion) // 두 자리 소수점까지 표현
