@@ -15,9 +15,16 @@ pipeline {
                     withCredentials([string(credentialsId: 'mongodb', variable: 'mongoDBUri')]) {
                     sh "echo 'module.exports = { mongoDB: { mongoURI: `$mongoDBUri` } };' > /var/lib/jenkins/workspace/nadeuliChatpp/config/dbConfig.js"
                     }
+
+                    def versionFile = '/var/lib/jenkins/chat-version.txt'
+                    def currentVersion = readFile(versionFile).trim()
+                    def newVersion = (currentVersion as Float) + 0.01
+                    newVersion = String.format('%.2f', newVersion) // 두 자리 소수점까지 표현
+                    sh "echo $newVersion > $versionFile"
+
                     // Docker 이미지 빌드
                     dir('/var/lib/jenkins/workspace/nadeuliChatpp') {
-                        sh 'sudo docker build -t lsm00/nadeulichat:latest .'
+                        sh "sudo docker build -t lsm00/nadeulichat:$newVersion ."
                     }
 
                     // 이전에 실행 중이던 도커 컨테이너 중지 및 삭제
@@ -28,12 +35,12 @@ pipeline {
                     }
 
                     // 새로운 도커 컨테이너 실행 (SSL 인증서 마운트)
-                    sh 'docker run -d --name nadeulichat -p 81:3001 -v /etc/letsencrypt/archive/nadeuli.kr:/app/config/nadeuli.kr -u root lsm00/nadeulichat:latest'
+                    sh "docker run -d --name nadeulichat -p 81:3001 -v /etc/letsencrypt/archive/nadeuli.kr:/app/config/nadeuli.kr -u root lsm00/nadeulichat:$newVersion"
                     
                     withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKERHUB_ACCESS_TOKEN')]) {
                         // Docker Hub에 로그인하고 이미지 푸시
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
-                        sh "docker push lsm00/nadeulichat:latest"
+                        sh "docker push lsm00/nadeulichat:$newVersion"
                     }
 
                     // Docker 이미지가 있는지 확인
