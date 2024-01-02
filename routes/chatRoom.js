@@ -58,6 +58,17 @@ router.get('/:tag', async (req, res) => {
       lastMessage: chatRoom.messages.length > 0 ? chatRoom.messages[chatRoom.messages.length - 1] : null,
     }));
 
+    chatRoomsWithParticipants.sort((a, b) => {
+      if (a.lastMessage && b.lastMessage) {
+        return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt);
+      } else if (a.lastMessage) {
+        return -1;
+      } else if (b.lastMessage) {
+        return 1;
+      }
+      return 0;
+    });
+
     res.json(chatRoomsWithParticipants);
   } catch (error) {
     console.error('Error fetching chat rooms:', error);
